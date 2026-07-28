@@ -33,7 +33,7 @@ public class Path {
 
         String fileContents = Util.readFile(file);
 
-        Assert.assertEquals(fileContents.replace("\r", ""), "# test\n" +
+        Assert.assertEquals(fileContents.replace("\r", ""), "\n# test\n" +
                 "config-with-dash: true\n");
     }
 
@@ -44,7 +44,7 @@ public class Path {
 
         String fileContents = Util.readFile(file);
 
-        Assert.assertEquals(fileContents.replace("\r", ""), "# test\n" +
+        Assert.assertEquals(fileContents.replace("\r", ""), "\n# test\n" +
                 "config-with-dash: false\n");
     }
 

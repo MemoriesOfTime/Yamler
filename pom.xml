@@ -50,6 +50,24 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.4</version>
+                <configuration>
+                    <!-- The project's test classes use a mix of names that do not
+                         match surefire's default pattern (Test-prefixed or Test/Tests/
+                         TestCase-suffixed). Names such as HashMap, List, Set, Real,
+                         Private, Singleton, ExtendedConfig, UpdateConfig and FieldIsKey
+                         are real test classes too. Without this override, 10 test
+                         classes and 23 test methods were silently skipped. TestNG
+                         ignores any class without @Test annotations, so matching
+                         *.java is safe here. -->
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.4.1</version>
             </plugin>

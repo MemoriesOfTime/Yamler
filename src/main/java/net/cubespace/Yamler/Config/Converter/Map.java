@@ -39,7 +39,11 @@ public class Map implements Converter {
             java.util.Map<Object, Object> map;
             try {
                 map = (java.util.Map<Object, Object>) ((Class<?>) genericType.getRawType()).getDeclaredConstructor().newInstance();
-            } catch (InstantiationException e) {
+            } catch (Exception e) {
+                // Interfaces (e.g. java.util.Map), abstract types, or types
+                // without a no-arg constructor cannot be instantiated directly.
+                // Previously only InstantiationException was caught, so declaring
+                // a field as the Map interface threw NoSuchMethodException.
                 map = new HashMap<>();
             }
 

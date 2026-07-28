@@ -49,60 +49,86 @@ public class Real {
         realConfig.save();
 
         String fileContents = Util.readFile(file);
-        Assert.assertEquals(fileContents.replace("\r", ""), "# Database configuration.\n" +
+        Assert.assertEquals(fileContents.replace("\r", ""), "\n" +
+                "# Database configuration.\n" +
                 "database:\n" +
+                "\n" +
                 "  # The database JDBC address. Should replace dbname with the database name.\n" +
                 "  address: jdbc:mysql://localhost/dbname\n" +
+                "\n" +
                 "  # The table to use within given database\n" +
                 "  table: RushPlugin\n" +
+                "\n" +
                 "  # Database username, if applicable. Leave empty if unneeded\n" +
                 "  username: ''\n" +
+                "\n" +
                 "  # Database password, if applicable. Leave empty if unneeded\n" +
                 "  password: ''\n" +
+                "\n" +
                 "# Gameplay settings\n" +
                 "gameplay:\n" +
+                "\n" +
                 "  # Delay in minutes during which players cannot break beds.\n" +
                 "  bedBreakDelay: 60\n" +
+                "\n" +
                 "  # Amount of players each team needs before starting the game.\n" +
                 "  playersPerTeam: 4\n" +
+                "\n" +
                 "  # Amount of teams in the game.\n" +
                 "  # Can be 2, 3, 4 or 6\n" +
                 "  teams: 2\n" +
+                "\n" +
                 "  # Delay in seconds before starting the game\n" +
                 "  gameStartDelay: 10\n" +
+                "\n" +
                 "  # Delay in seconds for forced respawn after death.\n" +
                 "  respawnDelay: 10\n" +
+                "\n" +
                 "# Score system settings\n" +
                 "scoring:\n" +
+                "\n" +
                 "  # Points earned when winning the game\n" +
                 "  win: 4\n" +
+                "\n" +
                 "  # Points lost when losing the game\n" +
                 "  lose: 2\n" +
+                "\n" +
                 "  # Points earned when killing an enemy\n" +
                 "  kill: 2\n" +
+                "\n" +
                 "  # Points lost when getting killed\n" +
                 "  death: 1\n" +
+                "\n" +
                 "# Economy settings\n" +
                 "economy:\n" +
+                "\n" +
                 "  # Money earned when winning the game\n" +
                 "  win: 4\n" +
+                "\n" +
                 "  # Money lost when losing the game\n" +
                 "  lose: 2\n" +
+                "\n" +
                 "  # Points earned when killing an enemy\n" +
                 "  kill: 2\n" +
+                "\n" +
                 "  # Points lost when getting killed\n" +
                 "  death: 1\n" +
+                "\n" +
                 "# Game Setup\n" +
                 "setup:\n" +
+                "\n" +
                 "  # Game world\n" +
                 "  world: world\n" +
+                "\n" +
                 "  # Server to move players to after game over\n" +
                 "  hubServer: hub\n" +
+                "\n" +
                 "  # Position of the lobby\n" +
                 "  lobbyPosition:\n" +
                 "    x: 0\n" +
                 "    y: 50\n" +
                 "    z: 0\n" +
+                "\n" +
                 "  # Position of each spawns\n" +
                 "  spawnPosition:\n" +
                 "  - x: 0\n" +
@@ -138,60 +164,86 @@ public class Real {
 
         String fileContents = Util.readFile(file);
 
-        Assert.assertEquals(fileContents.replace("\r", ""), "# Database configuration.\n" +
+        Assert.assertEquals(fileContents.replace("\r", ""), "\n" +
+                "# Database configuration.\n" +
                 "database:\n" +
+                "\n" +
                 "  # The database JDBC address. Should replace dbname with the database name.\n" +
                 "  address: jdbc:mysql://localhost/dbname\n" +
+                "\n" +
                 "  # The table to use within given database\n" +
                 "  table: RushPlugin\n" +
+                "\n" +
                 "  # Database username, if applicable. Leave empty if unneeded\n" +
                 "  username: ''\n" +
+                "\n" +
                 "  # Database password, if applicable. Leave empty if unneeded\n" +
                 "  password: ''\n" +
+                "\n" +
                 "# Gameplay settings\n" +
                 "gameplay:\n" +
+                "\n" +
                 "  # Delay in minutes during which players cannot break beds.\n" +
                 "  bedBreakDelay: 60\n" +
+                "\n" +
                 "  # Amount of players each team needs before starting the game.\n" +
                 "  playersPerTeam: 4\n" +
+                "\n" +
                 "  # Amount of teams in the game.\n" +
                 "  # Can be 2, 3, 4 or 6\n" +
                 "  teams: 2\n" +
+                "\n" +
                 "  # Delay in seconds before starting the game\n" +
                 "  gameStartDelay: 10\n" +
+                "\n" +
                 "  # Delay in seconds for forced respawn after death.\n" +
                 "  respawnDelay: 10\n" +
+                "\n" +
                 "# Score system settings\n" +
                 "scoring:\n" +
+                "\n" +
                 "  # Points earned when winning the game\n" +
                 "  win: 4\n" +
+                "\n" +
                 "  # Points lost when losing the game\n" +
                 "  lose: 2\n" +
+                "\n" +
                 "  # Points earned when killing an enemy\n" +
                 "  kill: 2\n" +
+                "\n" +
                 "  # Points lost when getting killed\n" +
                 "  death: 1\n" +
+                "\n" +
                 "# Economy settings\n" +
                 "economy:\n" +
+                "\n" +
                 "  # Money earned when winning the game\n" +
                 "  win: 4\n" +
+                "\n" +
                 "  # Money lost when losing the game\n" +
                 "  lose: 2\n" +
+                "\n" +
                 "  # Points earned when killing an enemy\n" +
                 "  kill: 2\n" +
+                "\n" +
                 "  # Points lost when getting killed\n" +
                 "  death: 1\n" +
+                "\n" +
                 "# Game Setup\n" +
                 "setup:\n" +
+                "\n" +
                 "  # Game world\n" +
                 "  world: world\n" +
+                "\n" +
                 "  # Server to move players to after game over\n" +
                 "  hubServer: hub\n" +
+                "\n" +
                 "  # Position of the lobby\n" +
                 "  lobbyPosition:\n" +
                 "    x: 0\n" +
                 "    y: 50\n" +
                 "    z: 0\n" +
+                "\n" +
                 "  # Position of each spawns\n" +
                 "  spawnPosition:\n" +
                 "  - x: 0\n" +

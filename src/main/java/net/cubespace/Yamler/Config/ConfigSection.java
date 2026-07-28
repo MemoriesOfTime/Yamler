@@ -151,14 +151,18 @@ public class ConfigSection {
         }
 
         //Be sure to have all ConfigSections down the Path
-        int i1 = -1, i2;
+        int i1 = -1, i2 = 0;
         ConfigSection section = this;
         while ((i1 = path.indexOf('.', i2 = i1 + 1)) != -1) {
             String node = path.substring(i2, i1);
             ConfigSection subSection = section.getConfigSection(node);
 
+            // Read-only lookup: missing intermediate nodes must NOT be created.
+            // The previous implementation called section.create(node), which
+            // mutated the tree on every read of a non-existent dotted path and
+            // leaked empty ConfigSection nodes into the serialized output.
             if (subSection == null) {
-                section = section.create(node);
+                return null;
             } else {
                 section = subSection;
             }

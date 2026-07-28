@@ -4,6 +4,7 @@ import net.cubespace.Yamler.Config.ConfigSection;
 import net.cubespace.Yamler.Config.InternalConverter;
 import net.cubespace.Yamler.Config.YamlConfig;
 
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.util.Map;
 
@@ -38,9 +39,14 @@ public class Config implements Converter {
     // recursively handles enclosed classes
     public Object newInstance(Class<?> type) throws Exception {
         Class<?> enclosingClass = type.getEnclosingClass();
-        if (enclosingClass != null) {
+        // Only non-static inner (member) classes need an enclosing instance passed
+        // to their constructor. Static nested classes share the same
+        // getEnclosingClass() but take a no-arg constructor, so the previous
+        // unguarded check incorrectly tried to resolve a synthetic
+        // (EnclosingClass) constructor for them and threw NoSuchMethodException.
+        if (enclosingClass != null && !Modifier.isStatic(type.getModifiers())) {
             Object instanceOfEnclosingClass = newInstance(enclosingClass);
-            return type.getConstructor(enclosingClass).newInstance(instanceOfEnclosingClass);
+            return type.getDeclaredConstructor(enclosingClass).newInstance(instanceOfEnclosingClass);
         } else {
             return type.getDeclaredConstructor().newInstance();
         }
