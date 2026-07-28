@@ -9,7 +9,7 @@ import java.util.HashSet;
  * @author geNAZt (fabian.fassbender42@googlemail.com)
  */
 public class Primitive implements Converter {
-    private HashSet<String> types = new HashSet<String>() {{
+    private HashSet<String> types = new HashSet<>() {{
         add("boolean");
         add("char");
         add("byte");
@@ -32,18 +32,18 @@ public class Primitive implements Converter {
     }
 
     @Override
-    public Object fromConfig(Class type, Object section, ParameterizedType genericType) throws Exception {
+    public Object fromConfig(Class<?> type, Object section, ParameterizedType genericType) throws Exception {
         switch(type.getSimpleName()) {
             case "short":
-                return (section instanceof Short) ? section : new Integer((int) section).shortValue();
+                return (section instanceof Short) ? section : Integer.valueOf((int) section).shortValue();
             case "byte":
-                return (section instanceof Byte) ? section : new Integer((int) section).byteValue();
+                return (section instanceof Byte) ? section : Integer.valueOf((int) section).byteValue();
             case "float":
                 if ( section instanceof Integer ) {
-                    return new Double( (int) section ).floatValue();
+                    return Double.valueOf( (int) section ).floatValue();
                 }
 
-                return (section instanceof Float) ? section : new Double((double) section).floatValue();
+                return (section instanceof Float) ? section : Double.valueOf((double) section).floatValue();
             case "char":
                 return (section instanceof Character) ? section : ((String) section).charAt(0);
             default:

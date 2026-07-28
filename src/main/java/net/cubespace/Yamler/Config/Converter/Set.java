@@ -17,7 +17,7 @@ public class Set implements Converter {
     @Override
     public Object toConfig(Class<?> type, Object obj, ParameterizedType genericType) throws Exception {
         java.util.Set<Object> values = (java.util.Set<Object>) obj;
-        java.util.List newList = new ArrayList();
+        java.util.List<Object> newList = new ArrayList<>();
 
         Iterator<Object> iterator = values.iterator();
         while(iterator.hasNext()) {
@@ -35,20 +35,20 @@ public class Set implements Converter {
     }
 
     @Override
-    public Object fromConfig(Class type, Object section, ParameterizedType genericType) throws Exception {
+    public Object fromConfig(Class<?> type, Object section, ParameterizedType genericType) throws Exception {
         java.util.List<Object> values = (java.util.List<Object>) section;
         java.util.Set<Object> newList = new HashSet<>();
 
         try {
-            newList = (java.util.Set<Object>) type.newInstance();
+            newList = (java.util.Set<Object>) type.getDeclaredConstructor().newInstance();
         } catch (Exception e) { }
 
         if (genericType != null && genericType.getActualTypeArguments()[0] instanceof Class) {
-            Converter converter = internalConverter.getConverter((Class) genericType.getActualTypeArguments()[0]);
+            Converter converter = internalConverter.getConverter((Class<?>) genericType.getActualTypeArguments()[0]);
 
             if (converter != null) {
                 for ( int i = 0; i < values.size(); i++ ) {
-                    newList.add( converter.fromConfig( ( Class ) genericType.getActualTypeArguments()[0], values.get( i ), null ) );
+                    newList.add( converter.fromConfig( ( Class<?> ) genericType.getActualTypeArguments()[0], values.get( i ), null ) );
                 }
             } else {
                 newList.addAll( values );

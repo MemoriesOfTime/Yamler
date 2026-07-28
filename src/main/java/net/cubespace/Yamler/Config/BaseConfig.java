@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import net.cubespace.Yamler.Config.Converter.Converter;
+
 /**
  * @author geNAZt (fabian.fassbender42@googlemail.com)
  */
@@ -36,7 +38,7 @@ public class BaseConfig {
 	 * @param addConverter Converter to be added
 	 * @throws InvalidConverterException If the Converter has any errors this Exception tells you what
 	 */
-	public void addConverter(Class addConverter) throws InvalidConverterException {
+	public void addConverter(Class<? extends Converter> addConverter) throws InvalidConverterException {
 		converter.addCustomConverter(addConverter);
 	}
 

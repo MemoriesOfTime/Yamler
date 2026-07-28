@@ -31,15 +31,16 @@ public class Array implements Converter {
     }
 
     @Override
-    public Object fromConfig(Class type, Object section, ParameterizedType genericType) throws Exception {
+    public Object fromConfig(Class<?> type, Object section, ParameterizedType genericType) throws Exception {
         Class<?> singleType = type.getComponentType();
-        java.util.List values;
+        java.util.List<?> values;
 
         if(section instanceof java.util.List)
-            values = (java.util.List) section;
+            values = (java.util.List<?>) section;
         else {
-            values = new ArrayList();
-            Collections.addAll(values, (Object[]) section);
+            java.util.List<Object> tempList = new ArrayList<>();
+            Collections.addAll(tempList, (Object[]) section);
+            values = tempList;
         }
 
         Object ret = java.lang.reflect.Array.newInstance(singleType, values.size());

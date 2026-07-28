@@ -17,8 +17,8 @@ public class List implements Converter {
 
     @Override
     public Object toConfig(Class<?> type, Object obj, ParameterizedType genericType) throws Exception {
-        java.util.List values = (java.util.List) obj;
-        java.util.List newList = new ArrayList();
+        java.util.List<Object> values = (java.util.List<Object>) obj;
+        java.util.List<Object> newList = new ArrayList<>();
 
         for (Object val : values) {
             Converter converter = internalConverter.getConverter(val.getClass());
@@ -33,21 +33,21 @@ public class List implements Converter {
     }
 
     @Override
-    public Object fromConfig(Class type, Object section, ParameterizedType genericType) throws Exception {
-        java.util.List newList = new ArrayList();
+    public Object fromConfig(Class<?> type, Object section, ParameterizedType genericType) throws Exception {
+        java.util.List<Object> newList = new ArrayList<>();
         try {
-            newList = ((java.util.List) type.newInstance());
+            newList = (java.util.List<Object>) type.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
         }
 
-        java.util.List values = (java.util.List) section;
+        java.util.List<Object> values = (java.util.List<Object>) section;
 
         if (genericType != null && genericType.getActualTypeArguments()[0] instanceof Class) {
-            Converter converter = internalConverter.getConverter((Class) genericType.getActualTypeArguments()[0]);
+            Converter converter = internalConverter.getConverter((Class<?>) genericType.getActualTypeArguments()[0]);
 
             if (converter != null) {
                 for ( int i = 0; i < values.size(); i++ ) {
-                    newList.add( converter.fromConfig( ( Class ) genericType.getActualTypeArguments()[0], values.get( i ), null ) );
+                    newList.add( converter.fromConfig( ( Class<?> ) genericType.getActualTypeArguments()[0], values.get( i ), null ) );
                 }
             } else {
                 newList = values;

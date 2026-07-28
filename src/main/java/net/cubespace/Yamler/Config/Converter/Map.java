@@ -18,12 +18,12 @@ public class Map implements Converter {
 
     @Override
     public Object toConfig(Class<?> type, Object obj, ParameterizedType genericType) throws Exception {
-        java.util.Map<Object, Object> map1 = (java.util.Map) obj;
+        java.util.Map<Object, Object> map1 = (java.util.Map<Object, Object>) obj;
 
         for (java.util.Map.Entry<Object, Object> entry : map1.entrySet()) {
             if (entry.getValue() == null) continue;
 
-            Class clazz = entry.getValue().getClass();
+            Class<?> clazz = entry.getValue().getClass();
 
             Converter converter = internalConverter.getConverter(clazz);
             map1.put(entry.getKey(), (converter != null) ? converter.toConfig(clazz, entry.getValue(), null) : entry.getValue());
@@ -33,22 +33,22 @@ public class Map implements Converter {
     }
 
     @Override
-    public Object fromConfig(Class type, Object section, ParameterizedType genericType) throws Exception {
+    public Object fromConfig(Class<?> type, Object section, ParameterizedType genericType) throws Exception {
         if (genericType != null) {
 
-            java.util.Map map;
+            java.util.Map<Object, Object> map;
             try {
-                map = ((java.util.Map) ((Class) genericType.getRawType()).newInstance());
+                map = (java.util.Map<Object, Object>) ((Class<?>) genericType.getRawType()).getDeclaredConstructor().newInstance();
             } catch (InstantiationException e) {
-                map = new HashMap();
+                map = new HashMap<>();
             }
 
             if (genericType.getActualTypeArguments().length == 2) {
-                Class keyClass = ((Class) genericType.getActualTypeArguments()[0]);
+                Class<?> keyClass = ((Class<?>) genericType.getActualTypeArguments()[0]);
 
                 if ( section == null ) section = new HashMap<>();
 
-                java.util.Map<?, ?> map1 = (section instanceof java.util.Map) ? (java.util.Map) section : ((ConfigSection) section).getRawMap();
+                java.util.Map<?, ?> map1 = (section instanceof java.util.Map) ? (java.util.Map<?, ?>) section : ((ConfigSection) section).getRawMap();
                 for (java.util.Map.Entry<?, ?> entry : map1.entrySet()) {
                     Object key;
 
@@ -66,25 +66,25 @@ public class Map implements Converter {
                         key = entry.getKey();
                     }
 
-                    Class clazz;
+                    Class<?> clazz;
                     if (genericType.getActualTypeArguments()[1] instanceof ParameterizedType) {
                         ParameterizedType parameterizedType = (ParameterizedType) genericType.getActualTypeArguments()[1];
-                        clazz = (Class) parameterizedType.getRawType();
+                        clazz = (Class<?>) parameterizedType.getRawType();
                     } else {
-                        clazz = (Class) genericType.getActualTypeArguments()[1];
+                        clazz = (Class<?>) genericType.getActualTypeArguments()[1];
                     }
 
                     Converter converter = internalConverter.getConverter(clazz);
                     map.put(key, (converter != null) ? converter.fromConfig(clazz, entry.getValue(), (genericType.getActualTypeArguments()[1] instanceof ParameterizedType) ? (ParameterizedType) genericType.getActualTypeArguments()[1] : null) : entry.getValue());
                 }
             } else {
-                Converter converter = internalConverter.getConverter((Class) genericType.getRawType());
+                Converter converter = internalConverter.getConverter((Class<?>) genericType.getRawType());
 
                 if (converter != null) {
-                    return converter.fromConfig((Class) genericType.getRawType(), section, null);
+                    return converter.fromConfig((Class<?>) genericType.getRawType(), section, null);
                 }
 
-                return (section instanceof java.util.Map) ? (java.util.Map) section : ((ConfigSection) section).getRawMap();
+                return (section instanceof java.util.Map) ? (java.util.Map<?, ?>) section : ((ConfigSection) section).getRawMap();
             }
 
             return map;

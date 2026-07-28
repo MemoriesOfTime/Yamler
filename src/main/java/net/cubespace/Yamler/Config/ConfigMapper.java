@@ -11,7 +11,7 @@ import java.util.Map;
  * @author geNAZt (fabian.fassbender42@googlemail.com)
  */
 public class ConfigMapper extends BaseConfigMapper {
-	public Map<String, Object> saveToMap(Class clazz) throws Exception {
+	public Map<String, Object> saveToMap(Class<?> clazz) throws Exception {
 		Map<String, Object> returnMap = new HashMap<>();
 
 		if (!clazz.getSuperclass().equals(YamlConfig.class) && !clazz.getSuperclass().equals(Object.class)) {
@@ -62,11 +62,13 @@ public class ConfigMapper extends BaseConfigMapper {
 		}
 
 		Converter mapConverter = converter.getConverter(Map.class);
-		return (Map<String, Object>) mapConverter.toConfig(HashMap.class, returnMap, null);
+		@SuppressWarnings("unchecked")
+		Map<String, Object> result = (Map<String, Object>) mapConverter.toConfig(HashMap.class, returnMap, null);
+		return result;
 	}
 
-	public void loadFromMap(Map section, Class clazz) throws Exception {
-		if (!clazz.getSuperclass().equals(YamlConfig.class) && !clazz.getSuperclass().equals(YamlConfig.class)) {
+	public void loadFromMap(Map<?, ?> section, Class<?> clazz) throws Exception {
+		if (!clazz.getSuperclass().equals(YamlConfig.class) && !clazz.getSuperclass().equals(Object.class)) {
 			loadFromMap(section, clazz.getSuperclass());
 		}
 

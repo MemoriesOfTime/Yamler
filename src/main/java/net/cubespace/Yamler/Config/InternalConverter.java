@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class InternalConverter {
 	private LinkedHashSet<Converter> converters = new LinkedHashSet<>();
-	private List<Class> customConverters = new ArrayList<>();
+	private List<Class<? extends Converter>> customConverters = new ArrayList<>();
 
 	public InternalConverter() {
 		try {
@@ -31,13 +31,13 @@ public class InternalConverter {
 		}
 	}
 
-	public void addConverter(Class converter) throws InvalidConverterException {
+	public void addConverter(Class<? extends Converter> converter) throws InvalidConverterException {
 		if (!Converter.class.isAssignableFrom(converter)) {
 			throw new InvalidConverterException("Converter does not implement the Interface Converter");
 		}
 
 		try {
-			Converter converter1 = (Converter) converter.getConstructor(InternalConverter.class).newInstance(this);
+			Converter converter1 = converter.getConstructor(InternalConverter.class).newInstance(this);
 			converters.add(converter1);
 		} catch (NoSuchMethodException e) {
 			throw new InvalidConverterException("Converter does not implement a Constructor which takes the InternalConverter instance", e);
@@ -50,7 +50,7 @@ public class InternalConverter {
 		}
 	}
 
-	public Converter getConverter(Class type) {
+	public Converter getConverter(Class<?> type) {
 		for (Converter converter : converters) {
 			if (converter.supports(type)) {
 				return converter;
@@ -188,11 +188,11 @@ public class InternalConverter {
 		root.set(path, obj);
 	}
 
-	public List<Class> getCustomConverters() {
+	public List<Class<? extends Converter>> getCustomConverters() {
 		return new ArrayList<>(customConverters);
 	}
 
-	public void addCustomConverter(Class addConverter) throws InvalidConverterException {
+	public void addCustomConverter(Class<? extends Converter> addConverter) throws InvalidConverterException {
 		addConverter(addConverter);
 		customConverters.add(addConverter);
 	}

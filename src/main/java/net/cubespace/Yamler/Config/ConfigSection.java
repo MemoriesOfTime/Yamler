@@ -172,11 +172,11 @@ public class ConfigSection {
         }
     }
 
-    public Map getRawMap() {
+    public Map<Object, Object> getRawMap() {
         return map;
     }
 
-    public static ConfigSection convertFromMap(Map config) {
+    public static ConfigSection convertFromMap(Map<?, ?> config) {
         ConfigSection configSection = new ConfigSection();
         configSection.map.putAll(config);
 

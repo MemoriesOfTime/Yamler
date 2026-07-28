@@ -18,6 +18,41 @@ public class YamlConfig extends ConfigMapper implements IConfig {
 	}
 
 
+	/**
+	 * Resolve the config path for a field based on {@link #CONFIG_MODE} and an optional {@link Path} annotation.
+	 * <p>
+	 * Centralizing this avoids the three call sites (collectComments, internalSave, internalLoad) drifting
+	 * apart, which previously caused comments to be registered under a different key than the data when
+	 * CONFIG_MODE is DEFAULT and the field name contains underscores.
+	 */
+	private String resolvePath(Field field) {
+		String path;
+
+		switch (CONFIG_MODE) {
+			case PATH_BY_UNDERSCORE:
+				path = field.getName().replace("_", ".");
+				break;
+			case FIELD_IS_KEY:
+				path = field.getName();
+				break;
+			case DEFAULT:
+			default:
+				String fieldName = field.getName();
+				if (fieldName.contains("_")) {
+					path = field.getName().replace("_", ".");
+				} else {
+					path = field.getName();
+				}
+				break;
+		}
+
+		if (field.isAnnotationPresent(Path.class)) {
+			path = field.getAnnotation(Path.class).value();
+		}
+
+		return path;
+	}
+
 	public void save(boolean withComments) throws InvalidConfigurationException {
 		if (CONFIG_FILE == null) {
 			throw new IllegalArgumentException("Saving a config without given File");
@@ -27,7 +62,8 @@ public class YamlConfig extends ConfigMapper implements IConfig {
 			root = new ConfigSection();
 		}
 
-		if (!withComments) clearComments();
+		clearComments();
+		if (withComments) collectComments(getClass());
 
 		internalSave(getClass());
 		saveToYaml();
@@ -38,7 +74,38 @@ public class YamlConfig extends ConfigMapper implements IConfig {
 		this.save(true);
 	}
 
-	private void internalSave(Class clazz) throws InvalidConfigurationException {
+	private void collectComments(Class<?> clazz) {
+		if (!clazz.getSuperclass().equals(YamlConfig.class)) {
+			collectComments(clazz.getSuperclass());
+		}
+
+		for (Field field : clazz.getDeclaredFields()) {
+			if (doSkip(field)) {
+				continue;
+			}
+
+			String path = resolvePath(field);
+
+			ArrayList<String> comments = new ArrayList<>();
+			for (Annotation annotation : field.getAnnotations()) {
+				if (annotation instanceof Comment) {
+					comments.add(((Comment) annotation).value());
+				}
+
+				if (annotation instanceof Comments) {
+					comments.addAll(Arrays.asList(((Comments) annotation).value()));
+				}
+			}
+
+			if (!comments.isEmpty()) {
+				for (String comment : comments) {
+					addComment(path, comment);
+				}
+			}
+		}
+	}
+
+	private void internalSave(Class<?> clazz) throws InvalidConfigurationException {
 		if (!clazz.getSuperclass().equals(YamlConfig.class)) {
 			internalSave(clazz.getSuperclass());
 		}
@@ -48,50 +115,7 @@ public class YamlConfig extends ConfigMapper implements IConfig {
 				continue;
 			}
 
-			String path = "";
-
-			switch (CONFIG_MODE) {
-				case PATH_BY_UNDERSCORE:
-					path = field.getName().replace("_", ".");
-					break;
-				case FIELD_IS_KEY:
-					path = field.getName();
-					break;
-				case DEFAULT:
-				default:
-					String fieldName = field.getName();
-					if (fieldName.contains("_")) {
-						path = field.getName().replace("_", ".");
-					} else {
-						path = field.getName();
-					}
-					break;
-			}
-
-			ArrayList<String> comments = new ArrayList<>();
-			for (Annotation annotation : field.getAnnotations()) {
-				if (annotation instanceof Comment) {
-					Comment comment = (Comment) annotation;
-					comments.add(comment.value());
-
-				}
-
-				if (annotation instanceof Comments) {
-					Comments comment = (Comments) annotation;
-					comments.addAll(Arrays.asList(comment.value()));
-				}
-			}
-
-			if (field.isAnnotationPresent(Path.class)) {
-				Path path1 = field.getAnnotation(Path.class);
-				path = path1.value();
-			}
-
-			if (comments.size() > 0) {
-				for (String comment : comments) {
-					addComment(path, comment);
-				}
-			}
+			String path = resolvePath(field);
 
 			if (Modifier.isPrivate(field.getModifiers())) {
 				field.setAccessible(true);
@@ -163,7 +187,7 @@ public class YamlConfig extends ConfigMapper implements IConfig {
 		internalLoad(getClass());
 	}
 
-	private void internalLoad(Class clazz) throws InvalidConfigurationException {
+	private void internalLoad(Class<?> clazz) throws InvalidConfigurationException {
 		if (!clazz.getSuperclass().equals(YamlConfig.class)) {
 			internalLoad(clazz.getSuperclass());
 		}
@@ -174,12 +198,7 @@ public class YamlConfig extends ConfigMapper implements IConfig {
 				continue;
 			}
 
-			String path = (CONFIG_MODE.equals(ConfigMode.PATH_BY_UNDERSCORE)) ? field.getName().replaceAll("_", ".") : field.getName();
-
-			if (field.isAnnotationPresent(Path.class)) {
-				Path path1 = field.getAnnotation(Path.class);
-				path = path1.value();
-			}
+			String path = resolvePath(field);
 
 			if (Modifier.isPrivate(field.getModifiers())) {
 				field.setAccessible(true);
@@ -206,6 +225,8 @@ public class YamlConfig extends ConfigMapper implements IConfig {
 		}
 
 		if (save) {
+			clearComments();
+			collectComments(getClass());
 			saveToYaml();
 		}
 	}
